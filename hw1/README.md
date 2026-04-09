@@ -224,4 +224,23 @@ API Response (Απάντηση συστήματος)
 Το μοντέλο εκπαιδεύτηκε χρησιμοποιώντας:
 - StandardScaler για την κανονικοποίηση των δεδομένων. 
 - Feature Engineering (Energy/Acousticness ratio, κτλ). 
-- Neural Network 
+- Neural Network
+
+## 7. Installation & Execution
+Clone the repository:
+```
+git clone [https://github.com/antoniakatsouri1-math/Spotify-Ai-Classifier]
+cd hw1
+```
+Install dependencies:
+```
+pip install -r requirements.txt
+```
+Run the core pipeline (Preprocessing, Training, Evaluation):
+```
+python main.py
+```
+Run the REST API (Bonus Task):
+```
+python api.py
+```
