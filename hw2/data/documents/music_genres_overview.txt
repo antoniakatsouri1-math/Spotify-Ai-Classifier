@@ -1,44 +1,37 @@
-Music Genres and Their Audio Characteristics
+[KNOWLEDGE_BASE: MUSIC_GENRE_SONIC_CHARACTERISTICS_AND_CLASSIFICATION]
 
-GENRE PROFILES IN TERMS OF AUDIO FEATURES
+1. CORE DEFINITION
+A music genre is a classification category defined by shared sonic characteristics: tempo (BPM), instrumentation, rhythm patterns, vocal style, production approach, and harmonic language. Genres function as heuristic reference points for algorithmic tagging, playlist routing, and audio analysis. They are fluid; classification often requires identifying a primary structural framework and secondary borrowed elements.
 
-Understanding how genres differ in their audio feature distributions is essential for music classification and recommendation systems. Below is a summary of typical audio feature ranges for major genres, based on analysis of Spotify's catalog.
+2. GENRE CLASSIFICATION SCHEMA
+When analyzing, tagging, or generating music, use the following sonic fingerprints to classify the primary genre:
 
-POP
-Danceability: 0.55–0.80 | Energy: 0.55–0.80 | Valence: 0.40–0.75
-Pop music is characterized by accessible melodies, strong hooks, and production polish. It tends to score high on danceability and energy while having moderate-to-high valence. Tempo typically falls between 100–130 BPM. Acousticness is low due to heavy production. Instrumentalness is near zero.
+- POP: 100-130 BPM. Traits: Strong melodic hooks, polished production, standard verse-chorus structure. Instruments: Synthesizers, programmed drums, layered top-line vocals.
+- HIP-HOP: 70-100 BPM (or 130-160 half-time). Traits: Rhythmic vocal delivery, heavy bass focus. Instruments: 808s, sampled breaks, trap hi-hats.
+- R&B: 60-110 BPM. Traits: Smooth vocal-centric production, syncopated grooves, lush harmonies. Instruments: Keyboards, bass guitar, layered vocal stacks.
+- ROCK: 110-140 BPM. Traits: Loud-soft dynamics, live-band acoustic feel. Instruments: Amplified electric guitar, bass guitar, acoustic drum kit.
+- ELECTRONIC / EDM: 120-150+ BPM. Traits: Production-first focus, repetitive loop structures, energy arcs (build-and-drop). Instruments: Synthesizers, drum machines, sidechain compression.
+- COUNTRY: 90-130 BPM. Traits: Narrative/storytelling lyrics, acoustic resonance, twang. Instruments: Acoustic guitar, pedal steel guitar, fiddle.
+- JAZZ: 80-200+ BPM. Traits: High harmonic complexity, extended chords, improvisation, swung or complex rhythms. Instruments: Horns, upright bass, brushed drums, piano.
+- FOLK: 80-120 BPM. Traits: Simple harmonic structures, narrative focus. Instruments: Pure acoustic (guitar, banjo, mandolin).
+- METAL: 100-200+ BPM. Traits: Extreme amplification, aggressive vocal delivery, complex rhythmic arrangements. Instruments: Down-tuned distorted guitars, double-kick drums.
+- REGGAE: 60-90 BPM. Traits: Offbeat rhythm emphasis (skank), laid-back groove, heavy bass. Instruments: Bass, rhythm guitar, one-drop drum pattern.
+- LATIN: 80-130 BPM. Traits: Syncopated clave rhythm patterns, percussion-heavy. Instruments: Congas, timbales, horns, acoustic guitar.
+- CLASSICAL: Highly variable BPM. Traits: Composed notation, extreme dynamic range (volume). Instruments: Orchestral strings, woodwinds, brass, piano.
 
-HIP-HOP / RAP
-Danceability: 0.70–0.90 | Energy: 0.50–0.80 | Speechiness: 0.15–0.45
-Hip-hop and rap have the highest speechiness values of any genre due to the prevalence of rapping. Danceability is consistently high due to rhythmic beats and syncopated patterns. Tempo is often moderate (80–110 BPM). Energy varies widely — trap music is high energy, lo-fi hip-hop is low energy.
+3. SUBGENRE MAPPING
+Subgenres represent specific mutations or historical iterations of the primary genres:
+- Pop Subgenres: Synth-pop (1980s synths), Indie Pop (lo-fi production), Dance-Pop (4-on-the-floor beat), Art Pop (experimental structure).
+- Hip-Hop Subgenres: Trap (808 bass, rapid hi-hats), Boom-bap (punchy sampled drums), Drill (sliding 808s, aggressive delivery), Lo-fi (relaxed, sample-heavy).
+- R&B Subgenres: Neo-soul (jazz/live instrument influence), Contemporary (modern electronic production).
+- Rock Subgenres: Indie, Punk (fast, stripped-down), Hard Rock (heavier distortion), Post-punk (angular, atmospheric).
+- Electronic Subgenres: House (120-130 BPM, 4-on-the-floor), Techno (repetitive, industrial), Drum & Bass (160-180 BPM, breakbeats), Dubstep (half-time, wobble bass), Ambient (textural, beatless).
+- Country Subgenres: Traditional (acoustic, 3-chord), Country Pop (arena hooks), Americana (roots/folk blend).
+- Jazz Subgenres: Bebop (fast, virtuosic), Cool Jazz (understated), Fusion (electronic/rock blend).
 
-ROCK
-Danceability: 0.35–0.65 | Energy: 0.65–0.95 | Acousticness: 0.01–0.20
-Rock is defined by high energy, with electric guitars and drums driving the intensity. Danceability is lower than pop or hip-hop. Loudness values are high. Valence is highly variable, spanning from melancholic alternative rock to upbeat classic rock.
+4. OPERATIONAL HEURISTICS FOR THE AGENT
+When evaluating music strategy, production, or metadata, apply the following rules:
 
-ELECTRONIC / EDM
-Danceability: 0.70–0.95 | Energy: 0.75–0.98 | Instrumentalness: 0.40–0.95
-Electronic music scores highest on danceability and energy among all genres. Tracks are frequently instrumental, with instrumentalness near 1.0 for many sub-genres (techno, ambient techno, minimal). Tempo is typically high (120–150 BPM for house and techno). Liveness is low as tracks are studio-produced.
-
-JAZZ
-Danceability: 0.30–0.65 | Acousticness: 0.40–0.90 | Instrumentalness: 0.50–0.95
-Jazz has high acousticness and instrumentalness reflecting its live-performance acoustic roots. Tempo varies widely across sub-genres from slow ballads to bebop. Energy is generally low to moderate. Valence tends to be moderate, reflecting the complex emotional range of the genre.
-
-CLASSICAL
-Danceability: 0.10–0.40 | Energy: 0.05–0.50 | Instrumentalness: 0.85–1.00
-Classical music has the lowest danceability and energy scores on the platform. Instrumentalness is near 1.0. Acousticness is very high. Duration is significantly longer than pop tracks, often exceeding 5–10 minutes. Tempo and dynamics vary enormously within a single piece.
-
-LATIN
-Danceability: 0.65–0.90 | Energy: 0.60–0.85 | Valence: 0.55–0.85
-Latin music (reggaeton, salsa, cumbia, bachata) consistently scores among the highest for danceability and valence. The genre's rhythmic complexity drives very high danceability scores. Reggaeton in particular has energy and danceability scores rivaling EDM.
-
-R&B / SOUL
-Danceability: 0.55–0.80 | Energy: 0.40–0.70 | Valence: 0.35–0.70
-R&B and soul combine smooth production with emotional depth. Danceability is high, energy is moderate, and valence is variable depending on whether the track is upbeat or more introspective. Speechiness is slightly elevated due to vocal melismas and spoken sections.
-
-AMBIENT / CHILL
-Danceability: 0.20–0.50 | Energy: 0.05–0.35 | Instrumentalness: 0.60–0.98
-Ambient music is designed for passive listening. It scores extremely low on energy and danceability, very high on instrumentalness, and typically features low tempo and high acousticness. Valence is neutral to slightly negative, creating a meditative quality.
-
-FEATURE IMPORTANCE FOR GENRE CLASSIFICATION
-In machine learning genre classification tasks using Spotify audio features, the most discriminative features are typically: energy, acousticness, instrumentalness, danceability, speechiness, and tempo. Loudness and valence provide secondary discriminative power. Track duration can help distinguish classical and jazz from pop.
+- RULE 1 (Tagging Strategy): Streaming recommendation algorithms require precise tagging. Mistagging a track (e.g., labeling Folk as Electronic) causes algorithmic misrouting, resulting in low listener retention and negative algorithmic penalization.
+- RULE 2 (Analyzing Blends): Successful genre blending consists of a Primary Genre (which dictates the rhythmic and structural framework) and a Secondary Genre (which provides color, such as harmonic language or specific instrumentation). Example: "Pop structure with Jazz harmony."
+- RULE 3 (Production Constraints): A track must maintain the core sonic conventions of its genre to be classified as such. Altering the fundamental frequency balance (e.g., removing the low-end bass from a Hip-Hop track) reclassifies the audio.

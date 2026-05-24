@@ -1,0 +1,79 @@
+Music genre classification is a fundamental component of music information retrieval systems, playing a
+pivotal role in applications such as personalized music
+recommendation engines, content organization, and
+music discovery platforms. This research paper
+delves into the application of machine learning methodologies to automate the process of
+categorizing music genres. By leveraging computational techniques, this study seeks to analyze intricate audio features and develop models capable of accurately predicting the genre
+of a given music track.
+Moreover, this study contributes to the expanding
+field of research in music genre classification by examining the effectiveness of various machine learning algorithms, including support vector machines (SVM),
+random forests, and convolutional neural networks
+(CNN). The research employs the GTZAN dataset,
+a standard benchmark consisting of audio recordings across multiple genres. Through thorough experimentation and analysis, this paper elucidates the
+strengths and limitations of different approaches. We
+present a comparative study that, contrary to prevailing trends, demonstrates that a Support Vector
+Machine classifier trained on meticulously engineered
+audio features can outperform a Convolutional Neural Network on this widely-used dataset. The findings of this research have significant implications for
+the practical application of machine learning in music classification, particularly in data-constrained scenarios, and underscore the enduring value of domainspecific feature engineering.
+1 Introduction
+Music, as a universal language, transcends cultural
+boundaries, evokes emotions, and shapes identities.
+Within the vast landscape of musical expression, genres serve as signposts, guiding listeners through diverse sonic experiences ranging from the soothing
+melodies of classical compositions to the pulsating
+rhythms of electronic dance music. The classification
+of music genres stands as a fundamental endeavor in
+the realm of musicology and technology, fueling endeavors such as personalized music recommendations,
+genre-specific playlists, and thematic radio stations.
+The automatic assignment of genre labels to muarXiv:2509.01762v1 [cs.SD] 1 Sep 2025
+sic files holds significant promise for enhancing the
+functionality and user experience of audio streaming
+platforms such as Spotify and iTunes. This study embarks upon an exploration of machine learning (ML)
+algorithms as a means to address the intricate task of
+genre identification and classification. Our methodology entails the extraction of features from both
+the temporal and spectral domains of audio signals.
+These extracted features serve as inputs for training
+conventional machine learning models, including Logistic Regression, Random Forests, Gradient Boosting, and Support Vector Machines. The training and
+evaluation of these models are conducted using the
+GTZAN Dataset.
+This research endeavors to explore the intersection
+of music and machine learning, delving into the application of advanced algorithms to unravel the intricate tapestry of musical genres. By leveraging computational prowess, we seek to unravel the patterns,
+rhythms, and timbres that define each genre, paving
+the way for more accurate, efficient, and scalable
+genre classification systems. Through this journey,
+we aim to not only enhance the organization and discovery of music but also deepen our understanding of
+the multifaceted nature of musical expression.Recent progressions in deep neural networks have
+propelled their utility in speech and audio data analysis (Abdel-Hamid et al., 2014; Gemmeke et al., 2017).
+Although representing audio in the time domain for
+neural network input presents challenges due to high
+sampling rates, techniques such as spectrograms have
+emerged as viable alternatives, capturing both time
+and frequency information (Van Den Oord et al.,
+2016; Wyse, 2017). Harnessing convolutional neural
+networks (CNNs), Li et al. (2010) devised a model
+utilizing raw MFCC matrices as input for music genre
+prediction. Similarly, Lidy and Schindler (2016) employed Constant Q-Transform (CQT) spectrograms
+as input to CNNs for genre classification tasks. The Role of Dataset Size and Feature Engineering
+Our results suggest this theoretical hierarchy is inverted under the practical constraints of the GTZAN
+dataset. With only 100 samples per genre, the
+dataset is relatively small for a deep model. CNNs,
+with their high capacity (high variance), are susceptible to overfitting, learning spurious artifacts specific
+to the training set rather than generalizable acoustic
+patterns.
+Conversely, the hand-crafted features represent
+condensed, expert domain knowledge. Feature engineering acts as a powerful form of regularization,
+guiding the learning algorithm by providing a lowdimensional, highly informative representation. The
+SVM is particularly adept at finding a robust decision
+boundary in this well-structured feature space, even
+with limited data. This exemplifies the bias-variance
+tradeoff: the SVM, with the strong bias from feature engineering, achieves lower variance and better
+generalization on this specific dataset than the highvariance, low-bias CNN.
+Conclusion
+This work tackled music genre classification on the
+GTZAN dataset using two methodologies: featurebased learning with traditional classifiers and endto-end learning with a CNN. Our evaluation revealed
+that a Support Vector Machine, trained on a comprehensive set of engineered audio features, achieved
+the highest classification performance.
+While CNNs are often state-of-the-art, our findings highlight a crucial caveat. On moderatelysized datasets, the strong inductive bias from expertengineered features can be more beneficial than the
+end-to-end paradigm of a CNN, which is prone to
+overfitting. This champions a nuanced approach to
+model selection, driven by dataset characteristics and
+available domain expertise.
