@@ -1,282 +1,245 @@
-# Homework 1 — From Data to Intelligent Model
-**Hands-on AI · SEMFE, NTUA**
+# Homework 1 - From Data to Intelligent Model
+___
+
+**Μάθημα:** AI Hands-on, ΕΜΠ 
+
+**Θεματική Ενότητα:** Ανίχνευση Προέλευσης Μουσικών Κομματιών (Spotify)
+
+**Ονοματεπώνυμο:** Αντωνία Κατσούρη
+
+**Αριθμός Μητρώου:** 09325010
+
+___
+## 1. Περιγραφή Προβλήματος
+
+**Πεδίο:** Music & Streaming — Spotify track metadata.
+
+**Στόχος** Διάκριση μεταξύ μουσικών κομματιών που δημιουργήθηκαν απο καλλιτέχνες και αυτών που δημιουργήθηκαν από τεχνητή νοημοσύνη με βάση ηχητικά χαρακτηριστικά τους όπως για παράδειγμα acousticness, energy, tempo.
+Οι πλατφόρμες streaming, οι οργανισμοί διαχείρισης δικαιωμάτων και οι καλλιτέχνες έχουν όλοι συμφέρον από την ανίχνευση προέλευσης ενός μουσικού κομματιού. Ένας αξιόπιστος ταξινομητής επιτρέπει την αυτοματοποιημένη επισήμανση, τη δρομολόγηση δικαιωμάτων και τους ελέγχους ακεραιότητας χωρίς να απαιτείται ανθρώπινος παράγοντας. Το πρόβλημα δεν είναι ασήμαντο, επειδή τα συστήματα τεχνητής νοημοσύνης εκπαιδεύονται όλο και περισσότερο να μιμούνται προφίλ ήχου που έχουν δημιουργηθεί από ανθρώπους.
+
+---
+## 2. Περιγραφή Δεδομένων (Dataset)
+
+**Πηγή:** [Spotify 2026 Synthetic Dataset with Simulation — Kaggle](https://www.kaggle.com/datasets/mdmahfuzsumon/spotify-2026-synthetic-dataset-with-simulation)
+
+**Μέγεθος:** 391989 γραμμές × 20 στήλες (μετά το preproccessing 18 στήλες).
+
+**Κατανομή Στόχου (Target Variable Distribution)**
+
+Το πλήθος δειγμάτων ανά κατηγορία είναι:
+- Κατηγορία '0' - Ανθρώπινος παράγοντας : 261326 δείγματα
+- Κατηγορία '1' - Τεχνητή νοημοσύνη : 130663 δείγματα
+- Η ήπια ανισορροπία αντιμετωπίστηκε με class_weight='balanced' στο Random Forest και weighted loss στο Νευρωνικό Δίκτυο.
 
 ---
 
-## 1. Problem Description
+## 3. Προσέγγιση Προεπεξεργασίας (Preprocessing)
 
-**Domain:** Student digital behaviour and social media impact on academic/cognitive outcomes.
+- Όλα τα στατιστικά στοιχεία προκύπτουν αποκλειστικά από το Training Set (80%) και εφαρμόζονται στα Validation (10%) και Test (10%) sets για την αποφυγή data leakage.
+- Split: Έγινε stratified split (80/10/10) με random_state=42.
+- Missing Values: Χρήση Median (διάμεσος) από το training set για όλα τα αριθμητικά χαρακτηριστικά.
+- Outliers: Εφαρμογή IQR Winsorizing. Τα όρια (Q1 - 1.5IQR / Q3 + 1.5IQR) υπολογίστηκαν μόνο στο training set και οι τιμές στα άλλα sets προσαρμόστηκαν στα όρια αυτά.
+- Scaling: Χρήση StandardScaler για μηδενική μέση τιμή και μοναδιαία διασπορά. Το αντικείμενο αποθηκεύτηκε ως models/scaler.pkl
+### 3.0 Αφαίρεση στηλών
+Οι στήλες "artist_name", "track_id", "track_name", "scenario αφαιρέθηκαν εξαρχής. Αυτό έγινε γιατί:
+- Έχουν πάρα πολλές μοναδικές τιμές (υψηλή cardinality), που θα έκαναν το μοντέλο να κάνει overfit σε συγκεκριμένους καλλιτέχνες αντί να μαθαίνει γενικά μουσικά χαρακτηριστικά. 
+- Δεν προσφέρουν γενικευμένη πληροφορία για το αν ένα κομμάτι είναι AI ή όχι.
 
-**Task type:** Multi-class classification (3 classes).
+### 3.1 Train / Validation / Test Split (80/10/10)
 
-**Target variable:** `behavioral_segment`
-- **High Risk** — high social media usage, high "brain rot" index, low attention span
-- **Balanced** — moderate behaviour across all dimensions
-- **Focused** — controlled usage, high attention, strong academic habits
+Η πρώτη λειτουργία που εκτελέστηκε στα ακατέργαστα δεδομένα ήταν ο διαχωρισμός τους. Χρησιμοποιήθηκαν δύο διαδοχικές κλήσεις της train_test_split με την παράμετρο stratify=y για τη διατήρηση της αναλογίας των κλάσεων και random_state=42 για την αναπαραγωγιμότητα των αποτελεσμάτων.
 
-**Why is this a useful prediction task?**
-Early identification of at-risk students enables educators and institutions to intervene before academic performance deteriorates. Knowing a student's behavioural profile from self-reported digital habits allows targeted support, e.g. screen-time counselling for High-Risk students or academic enrichment for Focused ones.
+### 3.2 Αντιμετώπιση κενών τιμών
+Χρησιμοποιήθηκε η διάμεσος (median) για τη συμπλήρωση κενών τιμών, καθώς είναι πιο ανθεκτική σε ακραίες τιμές που εμφανίζονται σε μουσικά χαρακτηριστικά. Όλες οι στατιστικές παράμετροι υπολογίστηκαν αποκλειστικά στο Training Set.
 
----
+### 3.3 Outlier Treatment — IQR Winsorizing
 
-## 2. Dataset Description
-
-| Property | Value |
-|---|---|
-| **Source** | [Kaggle — Student Social Media & Brain Rot Dataset](https://www.kaggle.com/datasets/nitikachandel95/student-social-media-impact-dataset) |
-| **Generation** | Synthetically generated (Python / NumPy / Pandas), dependency-driven simulation |
-| **Rows** | ~500,000 |
-| **Columns** | 35+ (mix of numerical and categorical) |
-| **File** | `data/global_student_digital_behavior_dataset.csv` |
-
-### Feature Overview
-
-| Category | Key Features |
-|---|---|
-| Demographics | `age`, `gender`, `country`, `development_level` |
-| Socioeconomic | `family_income_usd`, `urban_rural`, `internet_access`, `internet_speed_mbps` |
-| Education | `education_level`, `field_of_study`, `academic_motivation`, `online_learning_hours` |
-| Social Media | `daily_social_media_hours`, `session_frequency_per_day`, `avg_session_length_minutes`, `late_night_usage_hours` |
-| Content Mix | `educational_content_pct`, `entertainment_content_pct`, `short_video_pct`, `news_content_pct` |
-| Engagement | `daily_likes`, `daily_comments`, `content_creation_hours` |
-| Cognitive/Academic | `attention_span_minutes`, `study_hours_per_day`, `class_attendance_pct`, `productivity_score` |
-| Psychological | `stress_level`, `anxiety_score`, `depression_score`, `avg_daily_sleep_hours` |
-| Economic | `ad_exposure_per_day`, `impulse_purchases_per_month`, `monthly_digital_spending_usd` |
-
-### Target Distribution (approximate, by design)
-
-| Segment | Proportion |
-|---|---|
-| Balanced | ~40% |
-| High Risk | ~35% |
-| Focused | ~25% |
-
----
-
-## 3. Preprocessing Approach
-
-> **Split-first discipline strictly enforced.**
-> All statistics (medians, IQR bounds, encoder mappings, scaler parameters) are derived **exclusively from `X_train`** and then applied identically to `X_val` and `X_test`.
-
-### 3.1 Train / Val / Test Split
-Stratified 80 / 10 / 10 split using two sequential `train_test_split` calls with `stratify=y` to preserve class ratios. `random_state=42` for reproducibility.
-
-### 3.2 Missing Values
-- **Numerical columns:** imputed with **median** (preferred over mean due to skewed distributions such as `family_income_usd` and `daily_social_media_hours`).
-- **Categorical columns:** imputed with **mode** or `"Unknown"` if no mode is available.
-- **Target column:** rows with missing target are dropped before splitting.
-- All fill values computed on `X_train` only, then applied to `X_val` and `X_test`.
-
-### 3.3 Outlier Treatment
-**Method:** IQR Winsorising — values below `Q1 − 1.5·IQR` or above `Q3 + 1.5·IQR` are **capped** (not removed).
-
-**Rationale:** With ~500k rows, removing outliers would discard potentially valid extreme-usage students (e.g. 14+ hours/day on social media). Capping preserves all rows while bounding the influence of extreme values on model training.
-
-IQR bounds are computed on `X_train` only and applied to all three splits.
+Η συνάρτηση fit_outlier_bounds(X_train) υπολόγισε τα τεταρτημόρια (Q1, Q3) και το εύρος IQR αποκλειστικά για το Training Set. Χρησιμοποιήθηκε η μέθοδος Winsorizing, όπου οι τιμές εκτός των ορίων [Q1 - 1.5IQR, Q3 + 1.5IQR] δεν διαγράφηκαν, αλλά περιορίστηκαν στις τιμές των ορίων. 
+Επιλέχθηκετο Winsorizing καθώς το dataset είναι συνθετικό και οι ακραίες τιμές μπορεί να αποτελούν δομικά χαρακτηριστικά των AI τραγουδιών.
 
 ### 3.4 Encoding
-| Column type | Strategy | Reason |
-|---|---|---|
-| Binary (2 unique values) | `LabelEncoder` | Minimal encoding overhead |
-| Nominal categorical (≤15 unique) | One-Hot (`drop_first=True`) | Avoids multicollinearity |
-| High-cardinality (>15 unique) | Dropped | Prevents feature explosion; target-encoding can be added in HW2 |
 
-Column alignment after OHE: training-set column list is stored as `ohe_template`; val/test sets are aligned to this template (missing dummy columns filled with 0).
+Μετά την αφαίρεση των στηλών αναγνώρισης (artist_name, track_id, κ.λπ.), και τα εναπομείναντα χαρακτηριστικά ήταν ήδη σε αριθμητική μορφή, οπότε δεν απαιτήθηκε η εφαρμογή One-Hot Encoding. Η συνάρτηση encode() στο αρχείο src/preprocessing.py παραμένει για λόγους πληρότητας.
 
 ### 3.5 Feature Scaling
-**StandardScaler** (zero mean, unit variance) fitted on `X_train` only, applied to all three splits.
 
-Chosen over MinMaxScaler because:
-- The neural network benefits from zero-centred inputs.
-- XGBoost is tree-based and scale-invariant, but consistent scaling simplifies the shared pipeline.
+Για την κανονικοποίηση των δεδομένων χρησιμοποιήθηκε ο StandardScaler, ο οποίος προσαρμόστηκε αποκλειστικά στα δεδομένα του X_train και στη συνέχεια εφαρμόστηκε και στα τρία σύνολα (train, validation, test). Η επιλογή του StandardScaler έγινε έναντι του MinMaxScaler καθώς τα χαρακτηριστικά του dataset παρουσιάζουν μεγάλες διαφορές στις κλίμακές τους.
 
-The fitted scaler is saved as `models/scaler.pkl` for reuse in Homework 2.
+### 3.6 Feature Engineering
 
----
-
-## 4. Feature Engineering
-
-Three new domain-informed features are created **before** imputation (so raw column values are still intact):
-
-### Feature 1 — `digital_intensity`
-```
-digital_intensity = daily_social_media_hours × session_frequency_per_day
-```
-Captures the **multiplicative load** of both duration and frequency of social media use. A student who uses social media for 6 hours in 12 short sessions has a very different cognitive profile from one who uses it for 6 hours in 2 long sessions — yet raw hours alone cannot distinguish them.
-
-### Feature 2 — `sleep_debt_score`
-```
-sleep_debt_score = 1 / (avg_daily_sleep_hours + 1)
-```
-A bounded, non-linear recency-style score. A student sleeping 4 hours scores ≈ 0.20; one sleeping 8 hours scores ≈ 0.11. The `+1` prevents division-by-zero. This captures the diminishing returns of each additional hour of sleep in a compact [0, 1] range that is directly interpretable by both models.
-
-### Feature 3 — `productive_ratio`
-```
-productive_ratio = online_learning_hours / (daily_social_media_hours + 1)
-```
-Measures the **fraction of digital time spent constructively**. A student with 3 online learning hours and 3 social media hours scores 0.75; one with 0.5 learning hours and 10 social media hours scores 0.045. This directly operationalises the "offsetting hypothesis" raised in the dataset description.
-
-All three features are **added alongside** original columns — originals are not replaced.
+1)  **energy_acousticness_ratio** : Υπολογίζεται ως *energy / (acousticness + 1e-6)*. 
+- Τα AI κομμάτια τείνουν να έχουν ταυτόχρονα υψηλή ενέργεια και χαμηλή ακουστικότητα. Αυτός ο λόγος ενισχύει αυτό το σήμα, βασιζόμενος στην ισχυρή αρνητική συσχέτιση ($r = -0.71$) που παρατηρήθηκε μεταξύ των δύο μεταβλητών.
+2) **danceability_valence_product**: Υπολογίζεται ως το γινόμενο *danceability * valence*. 
+- Τα συστήματα παραγωγής μουσικής AI συχνά βελτιστοποιούν ταυτόχρονα τον "χορευτικό" και τον "χαρούμενο/θετικό" χαρακτήρα. Το γινόμενο αυτό αναδεικνύει τους συνδυασμούς υψηλών τιμών που τα μεμονωμένα χαρακτηριστικά δεν μπορούν να συλλάβουν πλήρως.
+3) **loudness_positive**: Υπολογίζεται ως *loudness + 60.0*. 
+- Δεδομένου ότι η ένταση (loudness) μετριέται σε dB (τιμές $\le 0$), η μετατόπιση σε μια μη-αρνητική κλίμακα βελτιώνει την ερμηνευτικότητα των συντελεστών στην ανάλυση PCA, διατηρώντας παράλληλα τη μονοτονική σχέση με την αντιληπτή ένταση.
 
 ---
 
-## 5. PCA Insights
+## 4. Συμπεράσματα ανάλυσης PCA 
 
-PCA is run on the **scaled training set** after all preprocessing steps. Plots saved to `models/`.
+Η Ανάλυση Κύριων Συνιστωσών (PCA) εφαρμόστηκε στα κανονικοποιημένα δεδομένα του X_train (18 χαρακτηριστικά) με την παράμετρο random_state=42. Τα κυριότερα ευρήματα είναι:
 
-### Scree Plot (`models/pca_scree.png`)
-The scree plot reveals how many components are needed to capture 90% of total variance. Based on the dataset's design (many interdependent behavioural variables), the first few components typically capture a disproportionate share of variance, reflecting the underlying causal chain:
+### Scree plot 
+![pca_scree.png](plots/pca_scree.png)
+Scree Plot: Το διάγραμμα δείχνει ότι απαιτούνται 11 κύριες συνιστώσες για να καλυφθεί το 90% της πληροφορίας του dataset. Η σταδιακή πτώση των μπλε μπαρών (individual variance) υποδηλώνει ότι η πληροφορία είναι διαμοιρασμένη σε πολλά χαρακτηριστικά και δεν κυριαρχείται από μία μόνο μεταβλητή.
 
-> `Digital Access → Social Media Behaviour → Cognitive/Psychological Outcomes`
+### PC1 loadings
+![pca_loadings.png](plots/pca_loadings.png)
+Το heatmap για τις 3 πρώτες κύριες συνιστώσες παρέχει πληροφορίες για τη δομή των δεδομένων:
+- PC1 : Παρατηρούμε ισχυρές θετικές φορτίσεις (πορτοκαλί/κόκκινο χρώμα) στα loudness, loudness_positive, energy και danceability. Αντίθετα, το acousticness και το instrumentalness έχουν αρνητικές φορτίσεις (μπλε). Αυτό σημαίνει ότι η PC1 διαχωρίζει τα δυνατά, ρυθμικά και "ηλεκτρονικά" κομμάτια από τα ήρεμα και ακουστικά. 
+- PC2 : Εδώ κυριαρχεί η duration_ms (θετική φόρτιση) σε αντίθεση με τα valence, danceability_valence_product και short_form (αρνητικές φορτίσεις). Η PC2 φαίνεται να διαχωρίζει τα μεγάλα σε διάρκεια κομμάτια από τα σύντομα, χαρούμενα και εμπορικά tracks. 
+- PC3 : Η τρίτη συνιστώσα δίνει έμφαση στα short_form, liveness και στο engineered feature energy_acousticness_ratio. Το γεγονός ότι το ratio που κατασκευάσαμε έχει διακριτή παρουσία στην PC3 δείχνει ότι προσφέρει επιπλέον πληροφορία που δεν καλύπτεται πλήρως από τις δύο πρώτες συνιστώσες.
 
-### Loadings Heatmap (`models/pca_loadings.png`)
-The top contributors to **PC1** are expected to be variables directly tied to social media intensity: `digital_intensity`, `daily_social_media_hours`, `short_video_pct`, and `late_night_usage_hours`. These reflect the "brain rot" axis — the primary dimension of variation in the dataset.
-
-**PC2** is expected to be driven by academic/cognitive outputs: `study_hours_per_day`, `class_attendance_pct`, `attention_span_minutes`, and `productive_ratio` — a dimension orthogonal to raw usage intensity.
-
-The engineered features (`digital_intensity`, `sleep_debt_score`, `productive_ratio`) appearing prominently in the loadings validates the feature engineering choices.
-
-### 2-D Scatter (`models/pca_scatter.png`)
-The projection onto PC1 and PC2 is expected to show rough separation between **High Risk** and **Focused** students along PC1, with **Balanced** students occupying the middle region. This confirms that the two principal axes align with meaningful real-world behavioural gradients rather than noise.
+### 2D scatter 
+![pca_scatter.png](plots/pca_scatter.png)
+- Μη Γραμμικός Διαχωρισμός: Παρατηρείται εκτεταμένη επικάλυψη μεταξύ των κλάσεων Human (μπλε) και AI-Generated (κόκκινο). Αυτό αποδεικνύει ότι οι δύο κλάσεις δεν μπορούν να διαχωριστούν με μια απλή ευθεία γραμμή (γραμμικός διαχωριστής).
+- Πυκνότητα Κλάσεων: Η κλάση AI-Generated φαίνεται να είναι πιο συγκεντρωμένη σε συγκεκριμένες περιοχές του χώρου των συνιστωσών, ενώ τα ανθρώπινα κομμάτια παρουσιάζουν μεγαλύτερη διασπορά.
 
 ---
+## 5. Εκπαίδευση μοντέλων
+
+### Random Forest
+- Τύπος Προβλήματος: Δυαδική Ταξινόμηση (Human vs AI-Generated).
+- Επιλεγμένο Μοντέλο: RandomForestClassifier (200 δέντρα, μέγιστο βάθος 15).
+- Διαχείριση Ανισορροπίας: Χρήση class_weight='balanced' για την ορθή αντιμετώπιση της αναλογίας των κλάσεων.
+- Απόδοση Validation: Το μοντέλο πέτυχε ROC-AUC: 0.9590, επιβεβαιώνοντας την υψηλή προβλεπτική ικανότητα του pipeline.
+- Σημαντικότητα Χαρακτηριστικών (Top-5 Features):
+1) instrumentalness
+2) acousticness
+3) liveness
+4) energy_acousticness_ratio 
+5) energy
+
+![rf_feature_importances.png](plots/rf_feature_importances.png)
+
+### Neural Network
+Πραγματοποιήθηκε σύγκριση τεσσάρων διαφορετικών συναρτήσεων ενεργοποίησης στο Νευρωνικό Δίκτυο (MLP) για την αξιολόγηση της ταχύτητας σύγκλισης και της τελικής ακρίβειας (ROC-AUC):
+![activation_comparison.png](plots/activation_comparison.png)
+- Kαλύτερη Απόδοση: Η συνάρτηση Tanh πέτυχε το υψηλότερο σκορ (0.9604), γεγονός που αποδίδεται στην καλύτερη ευθυγράμμιση με τα κανονικοποιημένα δεδομένα (zero-centered inputs) του StandardScaler.
+- Ταχύτητα: Η ReLU σύγκλινε ταχύτερα από όλες (μόλις στην 25η εποχή), αλλά υστερούσε ελαφρώς σε ακρίβεια. Οι συναρτήσεις LeakyReLU και ELU παρουσίασαν παρόμοια συμπεριφορά, προσφέροντας μια ισορροπία μεταξύ των δύο.
+#### Παρόλο που η Tanh παρουσίασε οριακά καλύτερο ROC-AUC (0.9604), επιλέχθηκε η ReLU για το τελικό pipeline λόγω της ταχύτερης σύγκλισης (25 έναντι 40 εποχών) και του χαμηλότερου υπολογιστικού κόστους, διασφαλίζοντας χαμηλό latency κατά την απόκριση του FastAPI.
+
+- Αρχιτεκτονική:
+Input(18) → Dense(128, ReLU) → Dropout(0.3) → Dense(64, ReLU) → Dropout(0.2) → Dense(32, LeakyReLU) → Dense(1, Sigmoid).
+
+- Εκπαίδευση: Χρησιμοποιήθηκε ο optimizer Adam, συνάρτηση απώλειας Binary Cross-Entropy και batch_size=256. Η στρατηγική εκπαίδευσης περιέλαβε Early Stopping και ReduceLROnPlateau για τη βελτιστοποίηση του ρυθμού μάθησης όταν το validation loss παρουσίαζε στασιμότητα.
+
+- Απόδοση Validation: Το μοντέλο πέτυχε κορυφαία επίδοση ROC-AUC: 0.9625, η οποία σημειώθηκε στην 96η εποχή. Η σταδιακή βελτίωση του AUC δείχνει μια υγιή και σταθερή διαδικασία μάθησης.
+
+___
 
 ## 6. Model Comparison
 
-> Full numerical results are generated at runtime and saved to `models/model_comparison.csv`.
-> The table below shows the structure; actual values depend on your run.
+### Random Forest Confusion Matrix
+![random_forest_confusion_matrix.png](plots/random_forest_confusion_matrix.png)
+Ο Confusion Matrix επιβεβαιώνει ότι το Random Forest λειτουργεί ως ένας 'ευαίσθητος ανιχνευτής'. Προτιμά να κάνει λάθος ταξινομώντας ένα ανθρώπινο κομμάτι ως AI (υψηλά FP), παρά να αφήσει ένα AI κομμάτι να περάσει απαρατήρητο ως ανθρώπινο (χαμηλά FN). Αυτή η συμπεριφορά είναι συνεπής με τη χρήση του class_weight='balanced', που αναγκάζει το μοντέλο να δίνει μεγαλύτερη προσοχή στην κλάση AI.
+- Recall (0.898): Ο χαμηλός αριθμός των False Negatives (1.336) σε σχέση με τα True Positives εξηγεί το υψηλό Recall. Το μοντέλο είναι "ευαίσθητο" και καταφέρνει να αναγνωρίσει το ~90% των AI κομματιών. 
+- Precision (0.786): Ο σχετικά υψηλός αριθμός των False Positives (3.193) ρίχνει το Precision. 
+- Accuracy (0.885): Παρόλο που η ακρίβεια φαίνεται υψηλή, ο Confusion Matrix αποδεικνύει η ακρίβεια είναι παραπλανητική. καθώς αν το μοντέλο προέβλεπε πάντα "Human" (λόγω της ανισορροπίας), θα είχε πάλι υψηλό Accuracy, αλλά ο πίνακας θα είχε μηδενικά στη δεύτερη στήλη.
+- F1-Score των 0.838 αποδεικνύει ότι το Random Forest διατηρεί μια πολύ καλή ισορροπία. δηλαδή το μοντέλο ανιχνεύει τα AI-generated κομμάτια χωρίς να κάνει υπερβολικά πολλά λάθη ταξινομώντας ανθρώπινα κομμάτια ως AI. 
+- ROC-AUC: 0.958, που σημαίνει ότι αν διαλέξουμε ένα τυχαίο AI κομμάτι και ένα τυχαίο Human κομμάτι, το μοντέλο θα δώσει υψηλότερη πιθανότητα στο AI κομμάτι στο 95.8% των περιπτώσεων.
 
-| Metric | XGBoost | Neural Network |
-|---|---|---|
-| Accuracy | — | — |
-| Precision (macro) | — | — |
-| Recall (macro) | — | — |
-| F1 (macro) | — | — |
-| ROC-AUC (macro) | — | — |
+### Neural Network Confusion Matrix
+![neural_network_confusion_matrix.png](plots/neural_network_confusion_matrix.png)
+Ο Confusion Matrix του Neural Network αναδεικνύει ένα μοντέλο με υψηλή εξειδίκευση. Η εντυπωσιακή μείωση των False Positives καθιστά το NN την ιδανική επιλογή.
+- Precision (0.862): Εδώ εντοπίζεται η μεγαλύτερη ισχύς του NN. Ο σημαντικά χαμηλότερος αριθμός των False Positives (1.731) σε σχέση με το RF σημαίνει ότι το μοντέλο είναι πολύ πιο αξιόπιστο όταν κάνει μια πρόβλεψη. 
+- Recall (0.825): Ο αριθμός των False Negatives (2.287) είναι υψηλότερος από του RF.
+- Accuracy (0.898): Η συνολική ακρίβεια είναι η υψηλότερη στο project. Αυτό οφείλεται στο ότι το NN κατάφερε να ταξινομήσει σωστά την πλειονότητα των ανθρώπινων κομματιών (24.402 True Negatives), αποφεύγοντας τα πολλά λάθη που έκανε το RF στην κλάση 0. 
+- F1-Score (0.843): Παρά το χαμηλότερο Recall, το F1-Score είναι ελαφρώς υψηλότερο από του RF. Αυτό αποδεικνύει ότι το NN επιτυγχάνει μια καλύτερη μαθηματική ισορροπία μεταξύ Precision και Recall. Είναι το μοντέλο που κάνει τα λιγότερα συνολικά λάθη (FP + FN) αναλογικά με την ανισορροπία του dataset. 
+- ROC-AUC (0.961): σημαίνει ότι στο 96.1% των περιπτώσεων, το NN θα δώσει υψηλότερη πιθανότητα σε ένα τυχαίο AI κομμάτι έναντι ενός ανθρώπινου. 
 
-### Expected outcome discussion
+### Σύγκριση των μοντέλων
+![model_comparison.png](plots/model_comparison.png)
 
-On **tabular datasets of this structure**, XGBoost typically matches or outperforms a shallow feedforward network because:
+| Metric | Random Forest | Neural Network |
+|---|---------------|----------------|
+| Accuracy | 0.8845        | 0.8975         |
+| Precision | 0.7860        | 0.8616         |
+| Recall | 0.8977        | 0.8250         |
+| F1-Score | 0.8382 | 0.8429        |
+| **ROC-AUC** | 0.9581        | 0.9614         |
 
-1. Tree-based models naturally capture the non-linear, interaction-heavy relationships present in behavioural data without requiring careful architecture search.
-2. With 500k rows, the neural network has enough data to learn, but the XGBoost's inductive bias (splitting on feature thresholds) is inherently well-suited to the ordinal and categorical nature of many features.
-3. The tuned XGBoost (Task 6 RandomizedSearchCV) has an additional advantage over the fixed-architecture neural network.
+Το **Νευρωνικό Δίκτυο (Neural Network)** αναδεικνύεται ως το βέλτιστο μοντέλο του project, υπερέχοντας στις περισσότερες μετρικές αξιολόγησης. Παρόλο που το Random Forest επέδειξε την υψηλότερη ευαισθησία στον εντοπισμό AI κομματιών (Recall: 0.898), το Νευρωνικό Δίκτυο πέτυχε ανώτερη συνολική ακρίβεια (Accuracy: 0.897) και την κορυφαία ικανότητα διαχωρισμού των κλάσεων (ROC-AUC: 0.961).
+![nn_loss_curve.png](plots/nn_loss_curve.png)
+Σύμφωνα με την καμπύλη απώλειας (Loss Curve) του Νευρωνικού Δικτύου, η σύγκλιση του Train Loss και του Validation Loss είναι σταθερή, με το Validation Loss να παραμένει συστηματικά ελαφρώς χαμηλότερο, γεγονός που υποδηλώνει ότι οι τεχνικές Regularization απέτρεψαν αποτελεσματικά την υπερπροσαρμογή. Η βελτίωση συνεχίστηκε ομαλά μέχρι την 96η εποχή, αποδεικνύοντας ότι το μοντέλο κατάφερε να εξάγει το μέγιστο δυνατό σήμα από τα δεδομένα.
+![roc_curves.png](plots/roc_curves.png)
 
-Whether the neural network's loss curves show convergence or plateau depends on the effective batch dynamics; early stopping (patience=15) prevents overfitting.
+## 7. Spotify AI-Track Classifier
+Αυτή η εφαρμογή είναι ένα FastAPI εργαλείο που χρησιμοποιεί Μηχανική Μάθηση για να προβλέψει αν ένα τραγούδι στο Spotify έχει δημιουργηθεί από AI (Τεχνητή Νοημοσύνη) ή από άνθρωπο, με βάση τα ακουστικά χαρακτηριστικά του.
 
-**Do the top XGBoost features align with PCA loadings?**
-Yes — features that dominate PC1 (digital intensity, social media hours, short video %) are expected to also rank highly in XGBoost feature importances, since both methods surface the most discriminative axes of variation.
-
----
-
-## 7. Best Model Designation
-
-The model with the higher **macro ROC-AUC on the test set** is designated `best_model.pkl`.
-
-- If **XGBoost** wins → `models/best_model.pkl` is a copy of `models/classical_model.pkl` (a `joblib`-serialised `XGBClassifier`).
-- If **Neural Network** wins → `models/best_model.pkl` is a copy of `models/neural_network.pt` (a PyTorch checkpoint dict).
-
-The winning model is printed at the end of `main.py` and recorded in `models/model_comparison.csv`.
-
-**This file is what Homework 2 will load directly** — do not delete or overwrite it after a successful run.
-
----
-
-## 8. Installation & Execution
-
-### Requirements
-- Python 3.10+
-- pip
-
-### Step-by-step
-
-```bash
-# 1. Clone the repository
-git clone <your-repo-url>
-cd hw1
-
-# 2. (Recommended) Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Download the dataset from Kaggle and place it at:
-#    data/global_student_digital_behavior_dataset.csv
-#    (or rename the downloaded file accordingly)
-
-# 5. Run the full pipeline  (includes hyperparameter tuning — may take ~10 min)
-python main.py
-
-# 5b. Faster run without tuning
-python main.py --no-tuning
-
-# 6. (Optional) Start the FastAPI prediction server
-uvicorn src.api:app --reload
-# Then open: http://127.0.0.1:8000/docs
+- **Προαπαιτούμενα**
+Βεβαιωθείτε ότι έχετε εγκαταστήσει τις απαραίτητες βιβλιοθήκες:
+```python
+pip install fastapi uvicorn joblib numpy scikit-learn torch pandas
 ```
-
-### Example API call (after starting the server)
-
-```bash
-curl -X POST "http://127.0.0.1:8000/predict" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "daily_social_media_hours": 8,
-    "session_frequency_per_day": 15,
-    "avg_daily_sleep_hours": 5,
-    "study_hours_per_day": 1,
-    "online_learning_hours": 0.5,
-    "attention_span_minutes": 10,
-    "stress_level": 8
-  }'
+- **Οδηγίες Χρήσης**
+1. Εκκίνηση του Server:
+Για να τρέξετε το API, ανοίξτε το Terminal και εκτελέστε:
+```python
+cd hw1/src
+python3 -m uvicorn api:app --reload
 ```
+2. Δοκιμή (Interactive Docs)
+Μόλις ο server ενεργοποιηθεί, μπορείτε να έχετε πρόσβαση στο διαδραστικό περιβάλλον δοκιμών (Swagger UI) στη διεύθυνση:
+ http://127.0.0.1:8000/docs
 
-Expected response:
-```json
+3. Endpoint Πρόβλεψης
+URL: /predict
+
+Input: Δέχεται ένα JSON με 15 χαρακτηριστικά (acousticness, danceability, energy, κτλ).
+Output: Επιστρέφει την πρόβλεψη (Human ή AI-Generated) και την πιθανότητα (probability).
+
+Για παράδειγμα:
+Παράδειγμα Χρήσης (Input/Output)
+Το API δέχεται δεδομένα σε μορφή JSON και επιστρέφει την πρόβλεψη μαζί με την πιθανότητα.
+- Input
+```
 {
-  "prediction": 0,
-  "label": "High Risk",
-  "probabilities": {
-    "Balanced": 0.0821,
-    "Focused": 0.0312,
-    "High Risk": 0.8867
-  }
+  "acousticness": 0.35, 
+  "danceability": 0.68, 
+  "duration_ms": 210000,
+  "energy": 0.72, 
+  "instrumentalness": 0.05, 
+  "key": 5,
+  "liveness": 0.12, 
+  "loudness": -8.5, 
+  "mode": 1,
+  "speechiness": 0.04, 
+  "tempo": 122.0, 
+  "time_signature": 4,
+  "valence": 0.55, 
+  "popularity": 40, 
+  "short_form": 0
 }
 ```
-
-### Output files after a successful run
-
+API Response (Απάντηση συστήματος)
 ```
-models/
-├── classical_model.pkl          # Trained XGBoost
-├── neural_network.pt            # Trained PyTorch network
-├── best_model.pkl               # Copy of the winning model
-├── scaler.pkl                   # Fitted StandardScaler
-├── label_encoder.pkl            # Target LabelEncoder
-├── preprocessing_artifacts.pkl  # fill values, IQR bounds, encoders
-├── pca_scree.png
-├── pca_loadings.png
-├── pca_scatter.png
-├── nn_loss_curve.png
-├── cm_xgboost.png
-├── cm_neural_network.png
-├── feature_importance.png
-└── model_comparison.csv / .png
+{
+  "prediction": 0,
+  "label": "Human",
+  "probability": 0
+}
 ```
+Χαρακτηριστικά Μοντέλου - 
+Το μοντέλο εκπαιδεύτηκε χρησιμοποιώντας:
+- StandardScaler για την κανονικοποίηση των δεδομένων. 
+- Feature Engineering (Energy/Acousticness ratio, κτλ). 
+- Neural Network
 
----
-
-## Reproducibility
-
-`random_state=42` is set in every call that accepts a seed:
-- `train_test_split` (both splits)
-- `XGBClassifier`
-- `RandomizedSearchCV`
-- `StratifiedKFold`
-- `PCA`
-- `torch.manual_seed`
-- `np.random.seed`
-
-Results are fully reproducible given the same dataset file.
+## 8. Εγκατάσταση & Εκτέλεση (Installation & Execution)
+Αντιγραφή του αρχείου κώδικα:
+```
+git clone [https://github.com/antoniakatsouri1-math/Spotify-Ai-Classifier]
+cd hw1
+```
+Εγκατάσταση προαπαιτούμενων:
+```
+pip install -r requirements.txt
+```
+Εκτέλεση του Κεντρικού Pipeline (Προεπεξεργασία, Εκπαίδευση, Αξιολόγηση):
+```
+python main.py
+```
+Εκκίνηση του REST API:
+```
