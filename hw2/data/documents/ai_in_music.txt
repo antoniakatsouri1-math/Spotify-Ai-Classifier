@@ -1,0 +1,48 @@
+Artificial Intelligence in Music: Analysis, Classification, and Recommendation
+Source: Wikipedia – "Artificial intelligence in music" (https://en.wikipedia.org/wiki/Artificial_intelligence_in_music)
+
+OVERVIEW
+
+Music and artificial intelligence (music and AI) is the development of music software programs that use AI to generate, analyse, and recommend music. AI has also been seen in musical analysis where it has been used for feature extraction, pattern recognition, and musical recommendations. Current systems are able to compose entire musical compositions, parse affective content, accompany human players in real-time, and acquire patterns of user and context-dependent preferences.
+
+MUSIC INFORMATION RETRIEVAL (MIR)
+
+Music Information Retrieval is the extraction of musically relevant information from audio recordings to be utilized in applications such as genre classification, instrument recognition, mood recognition, beat detection, and similarity estimation. CNNs on spectrogram features have been very accurate on these tasks. SVMs and k-Nearest Neighbors (k-NN) are also used for classification on features such as Mel-frequency cepstral coefficients (MFCCs).
+
+MIR techniques form the basis of automated music tagging and playlist generation systems used by major streaming platforms. The ability to automatically classify tracks by genre, mood, or energy level allows platforms like Spotify to organize their catalogs and power their recommendation engines without requiring manual tagging of every track.
+
+MUSIC RECOMMENDATION SYSTEMS
+
+Music recommenders employ AI to suggest tracks to users based on what they have heard, their tastes, and information available in context. Collaborative filtering, content-based filtering, and hybrid filtering are most widely applied, with deep learning being utilized for fine-tuning. Graph-based and matrix factorization methods are used within commercial systems like Spotify and YouTube Music to represent complex user-item relationships.
+
+Content-based filtering uses audio features — such as danceability, energy, tempo, and acousticness — to find tracks similar to ones a user already enjoys. If a user repeatedly listens to high-energy, high-danceability tracks, the system recommends tracks with similar feature profiles.
+
+Collaborative filtering identifies users with similar listening histories and recommends tracks they enjoyed. These two approaches are often combined in hybrid systems, which are the industry standard for large-scale music recommendation.
+
+AFFECTIVE COMPUTING IN MUSIC
+
+Affective computing techniques enable AI systems to classify or create music based on emotional content. The models use musical features such as tempo, mode, and timbre to classify or influence listener emotions. Deep learning models have been trained for classifying music based on affective content.
+
+Key audio features used in emotion and mood classification:
+- Valence: the degree of musical positiveness (happy vs. sad)
+- Energy: intensity and activity, correlated with arousal
+- Tempo: speed of the track in BPM, associated with excitement
+- Mode: major keys associated with positive emotions, minor with negative
+- Acousticness: acoustic tracks tend to score lower on arousal
+
+SYMBOLIC AND AUDIO-BASED MUSIC GENERATION
+
+Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) networks have been used to model temporal dependencies of musical sequences, generating melodies, harmonies, and counterpoints in various genres. Transformer models such as Music Transformer and MuseNet extended this to multi-instrument polyphonic music and stylistic imitations. For raw audio generation, Generative Adversarial Networks (GANs) and Variational Autoencoders (VAEs) are increasingly used for audio texture synthesis.
+
+FEATURE IMPORTANCE IN MUSIC CLASSIFICATION TASKS
+
+Research in music classification consistently identifies the following audio features as the most discriminative for tasks such as genre classification and popularity prediction:
+- Energy and loudness (highly correlated, reflect intensity)
+- Acousticness (strong negative correlation with energy)
+- Instrumentalness (distinguishes vocal from instrumental tracks)
+- Danceability (rhythmic regularity and beat strength)
+- Speechiness (proportion of spoken content)
+- Tempo (beats per minute)
+- Valence (emotional positivity)
+
+These features correspond directly to those provided by the Spotify Web API and form the input space of most Spotify-based machine learning tasks, including popularity classification and genre prediction.

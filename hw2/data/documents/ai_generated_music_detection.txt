@@ -1,0 +1,56 @@
+AI-Generated Music Detection: Characteristics, Challenges, and Methods
+Domain: Spotify Audio Feature Analysis for Human vs AI Classification
+
+OVERVIEW
+
+The rise of AI music generation systems — including tools such as Suno, Udio, MusicLM, and MusicGen — has created a growing need for automated classifiers that can distinguish AI-generated tracks from those created by human artists. Streaming platforms, rights management organisations, and artists all have an interest in detecting the origin of a musical track. A reliable classifier enables automated labelling, rights routing, and integrity checks without requiring human review.
+
+The problem is non-trivial because AI systems are increasingly trained to mimic human-produced audio profiles, making naive heuristics ineffective. Machine learning classifiers trained on audio features offer a more robust approach.
+
+KEY AUDIO FEATURE DIFFERENCES: AI vs HUMAN TRACKS
+
+Research and dataset analysis consistently identify the following patterns:
+
+1. ENERGY AND ACOUSTICNESS
+AI-generated tracks tend to have simultaneously high energy and low acousticness. This combination — captured by the engineered feature energy/acousticness ratio — is one of the strongest signals for AI origin. Human music shows a much wider distribution across this space, including many high-acousticness, lower-energy tracks (singer-songwriter, folk, classical).
+
+2. INSTRUMENTALNESS
+AI generation systems frequently produce highly instrumental content, particularly in ambient, electronic, and background music genres where there is high commercial demand but lower artistic scrutiny. High instrumentalness (>0.5) is more common in AI-generated tracks.
+
+3. DANCEABILITY AND VALENCE
+AI music production systems often optimise simultaneously for danceability and positive valence, since these features are associated with high engagement metrics on streaming platforms. The product of danceability × valence (danceability_valence_product) captures co-optimisation behaviour that individual features alone cannot fully express.
+
+4. LOUDNESS
+AI mastering tends to produce more loudness-normalised output. The loudness_positive feature (loudness + 60, shifting the negative dB scale to a non-negative range) helps expose this pattern in combination with energy.
+
+5. LIVENESS
+AI-generated tracks have near-zero liveness scores, as they are by definition studio-generated without any live audience. While many human studio recordings also have low liveness, very low liveness combined with high instrumentalness is a stronger AI signal.
+
+6. DURATION AND SHORT-FORM CONTENT
+AI generation is frequently used for short-form content (jingles, background music, short clips). The short_form binary feature (1 if duration is below a threshold) captures this tendency.
+
+MACHINE LEARNING APPROACHES
+
+Binary classification (Human=0, AI-Generated=1) using Spotify audio features has been shown to achieve high discriminative power (ROC-AUC > 0.95) with tree-based and neural network models.
+
+Most discriminative features (from feature importance analysis):
+1. instrumentalness
+2. acousticness
+3. liveness
+4. energy_acousticness_ratio (engineered)
+5. energy
+
+Neural networks with standardised inputs (StandardScaler) and dropout regularisation are particularly effective, as the feature interactions (e.g. energy × acousticness) are non-linear and benefit from learned representations.
+
+CLASS IMBALANCE
+In real-world datasets, human-made tracks typically outnumber AI-generated tracks (roughly 2:1 ratio). This imbalance is handled via class_weight='balanced' in tree-based models and weighted loss functions in neural networks, ensuring the minority class (AI) is not overwhelmed during training.
+
+WHY THIS MATTERS
+
+The ability to detect AI-generated music at scale has several practical applications:
+- Streaming platforms can flag or label AI content for transparency
+- Rights management organisations can route royalty flows correctly
+- Human artists benefit from differentiated discovery and promotion
+- Regulators and industry bodies can monitor the volume of AI content on platforms
+
+As AI music systems become more sophisticated, classifiers must be continuously retrained on new data to remain effective against increasingly human-like AI audio profiles.

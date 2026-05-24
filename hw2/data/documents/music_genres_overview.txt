@@ -1,0 +1,44 @@
+Music Genres and Their Audio Characteristics
+
+GENRE PROFILES IN TERMS OF AUDIO FEATURES
+
+Understanding how genres differ in their audio feature distributions is essential for music classification and recommendation systems. Below is a summary of typical audio feature ranges for major genres, based on analysis of Spotify's catalog.
+
+POP
+Danceability: 0.55–0.80 | Energy: 0.55–0.80 | Valence: 0.40–0.75
+Pop music is characterized by accessible melodies, strong hooks, and production polish. It tends to score high on danceability and energy while having moderate-to-high valence. Tempo typically falls between 100–130 BPM. Acousticness is low due to heavy production. Instrumentalness is near zero.
+
+HIP-HOP / RAP
+Danceability: 0.70–0.90 | Energy: 0.50–0.80 | Speechiness: 0.15–0.45
+Hip-hop and rap have the highest speechiness values of any genre due to the prevalence of rapping. Danceability is consistently high due to rhythmic beats and syncopated patterns. Tempo is often moderate (80–110 BPM). Energy varies widely — trap music is high energy, lo-fi hip-hop is low energy.
+
+ROCK
+Danceability: 0.35–0.65 | Energy: 0.65–0.95 | Acousticness: 0.01–0.20
+Rock is defined by high energy, with electric guitars and drums driving the intensity. Danceability is lower than pop or hip-hop. Loudness values are high. Valence is highly variable, spanning from melancholic alternative rock to upbeat classic rock.
+
+ELECTRONIC / EDM
+Danceability: 0.70–0.95 | Energy: 0.75–0.98 | Instrumentalness: 0.40–0.95
+Electronic music scores highest on danceability and energy among all genres. Tracks are frequently instrumental, with instrumentalness near 1.0 for many sub-genres (techno, ambient techno, minimal). Tempo is typically high (120–150 BPM for house and techno). Liveness is low as tracks are studio-produced.
+
+JAZZ
+Danceability: 0.30–0.65 | Acousticness: 0.40–0.90 | Instrumentalness: 0.50–0.95
+Jazz has high acousticness and instrumentalness reflecting its live-performance acoustic roots. Tempo varies widely across sub-genres from slow ballads to bebop. Energy is generally low to moderate. Valence tends to be moderate, reflecting the complex emotional range of the genre.
+
+CLASSICAL
+Danceability: 0.10–0.40 | Energy: 0.05–0.50 | Instrumentalness: 0.85–1.00
+Classical music has the lowest danceability and energy scores on the platform. Instrumentalness is near 1.0. Acousticness is very high. Duration is significantly longer than pop tracks, often exceeding 5–10 minutes. Tempo and dynamics vary enormously within a single piece.
+
+LATIN
+Danceability: 0.65–0.90 | Energy: 0.60–0.85 | Valence: 0.55–0.85
+Latin music (reggaeton, salsa, cumbia, bachata) consistently scores among the highest for danceability and valence. The genre's rhythmic complexity drives very high danceability scores. Reggaeton in particular has energy and danceability scores rivaling EDM.
+
+R&B / SOUL
+Danceability: 0.55–0.80 | Energy: 0.40–0.70 | Valence: 0.35–0.70
+R&B and soul combine smooth production with emotional depth. Danceability is high, energy is moderate, and valence is variable depending on whether the track is upbeat or more introspective. Speechiness is slightly elevated due to vocal melismas and spoken sections.
+
+AMBIENT / CHILL
+Danceability: 0.20–0.50 | Energy: 0.05–0.35 | Instrumentalness: 0.60–0.98
+Ambient music is designed for passive listening. It scores extremely low on energy and danceability, very high on instrumentalness, and typically features low tempo and high acousticness. Valence is neutral to slightly negative, creating a meditative quality.
+
+FEATURE IMPORTANCE FOR GENRE CLASSIFICATION
+In machine learning genre classification tasks using Spotify audio features, the most discriminative features are typically: energy, acousticness, instrumentalness, danceability, speechiness, and tempo. Loudness and valence provide secondary discriminative power. Track duration can help distinguish classical and jazz from pop.
