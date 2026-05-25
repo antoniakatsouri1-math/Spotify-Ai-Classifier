@@ -46,9 +46,17 @@
 * **Task 5 (Dataset Analytics Tool):** Δημιουργήθηκε το `dataset_stats_tool` που επιτρέπει στον Agent να διαβάζει το CSV αρχείο και να επιστρέφει στατιστικά (μέσο όρο, min, max, κατανομές) όταν ο χρήστης ρωτάει π.χ. *"Ποιος είναι ο μέσος όρος του tempo στο dataset;"*.
 * **Task 6 (Streaming API):** Υλοποιήθηκε το endpoint `POST /chat/stream` το οποίο επιστρέφει την απάντηση σταδιακά (token-by-token) χρησιμοποιώντας το πρωτόκολλο Server-Sent Events (SSE).
 
----
+## 6. Παραδείγματα συζητήσεων
+## Παράδειγμα 1
 
-## 6. Εγκατάσταση και Εκτέλεση (Installation & Execution)
+## Παράδειγμα 2
+Χρήστης: Is this track human or AI? acousticness=0.05, danceability=0.85, duration_ms=210000, energy=0.91, instrumentalness=0.82, key=5, liveness=0.08, loudness=-4.5, mode=1, speechiness=0.03, tempo=128.0, time_signature=4, valence=0.6, popularity=40, short_form=0
+Απάντηση: The provided track is: Human-made.
+Χρήστης: Why did you classify this track as Human-made? Which audio features played the biggest role in this decision?"
+Απάντηση: The audio features that played the biggest role in classifying the track as Human-made include:\n\n1. **Instrumentalness**: The track has a high instrumentalness value (0.82), which suggests that it features a lot of instrumental elements, such as guitars, drums, or synthesizers. Human-made music often has a more nuanced and varied instrumental arrangement, whereas AI-generated music may rely more heavily on pre-programmed loops or patterns.\n2. **Liveness**: The track has a low liveness value (0.08), which indicates that it was likely recorded in a studio or produced using digital tools. Human-made music often has a more dynamic and expressive quality, with subtle variations in timing, tone, and texture that are harder to replicate with AI-generated music.\n3. **Speechiness**: The track has a very low speechiness value (0.03), which suggests that it does not feature any significant spoken word elements. Human-made music often incorporates spoken word or vocal elements in a more creative and expressive way, whereas AI-generated music may struggle to replicate the nuances of human speech.\n4. **Valence**: The track has a moderate valence value (0.6), which indicates that it has a somewhat positive or uplifting emotional tone. Human-made music often has a more complex and nuanced emotional landscape, with a wider range of emotional expression and depth.\n\nThese audio features, among others, contributed to the classification of the track as Human-made. However, it's worth noting that the distinction between Human-made and AI-generated music can be subtle, and the classification may not always be accurate.
+
+
+## 7. Εγκατάσταση και Εκτέλεση (Installation & Execution)
 
 **Βήμα 1: Κλωνοποίηση του repository**
 ```bash
