@@ -46,7 +46,7 @@
 * **Task 6 (Streaming API):** Υλοποιήθηκε το endpoint `POST /chat/stream` το οποίο επιστρέφει την απάντηση σταδιακά (token-by-token) χρησιμοποιώντας το πρωτόκολλο Server-Sent Events (SSE).
 
 ## 6. Παραδείγματα Συζητήσεων
-
+Ο πράκτορας(agent) εκπαιδεύτηκε και επομένως εξυπηρετεί στην αγγλική γλώσσα.
 ### Παράδειγμα 1: 
 
 > **User:** What audio features make a song popular on Spotify?
