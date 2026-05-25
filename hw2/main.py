@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Verify API key is present
 provider = os.getenv("LLM_PROVIDER", "groq").lower()
 if provider == "anthropic":
     if not os.getenv("ANTHROPIC_API_KEY"):
@@ -21,7 +20,6 @@ elif provider == "groq":
     if not os.getenv("GROQ_API_KEY"):
         raise EnvironmentError("LLM_PROVIDER is 'groq' but GROQ_API_KEY is not set.")
 
-# Verify HW1 model artifacts are present
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "models" / "best_model.pt"
 SCALER_PATH = BASE_DIR / "models" / "scaler.pkl"
