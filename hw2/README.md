@@ -48,8 +48,12 @@
 
 ## 6. Παραδείγματα συζητήσεων
 ## Παράδειγμα 1
+Χρήστης: What audio features make a song popular on Spotify?
+Χρήστης: 
 
 ## Παράδειγμα 2
+Χρήστης: What is the average tempo in the dataset?
+Απάντηση: The average tempo in the dataset is 119.47 beats per minute.
 Χρήστης: Is this track human or AI? acousticness=0.05, danceability=0.85, duration_ms=210000, energy=0.91, instrumentalness=0.82, key=5, liveness=0.08, loudness=-4.5, mode=1, speechiness=0.03, tempo=128.0, time_signature=4, valence=0.6, popularity=40, short_form=0
 Απάντηση: The provided track is: Human-made.
 Χρήστης: Why did you classify this track as Human-made? Which audio features played the biggest role in this decision?"
