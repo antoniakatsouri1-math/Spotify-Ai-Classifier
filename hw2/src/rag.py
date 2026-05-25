@@ -19,7 +19,6 @@ TOP_K_RESULTS = 3
 
 
 def _get_embeddings() -> HuggingFaceEmbeddings:
-    """Return a cached HuggingFace embedding model."""
     return HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": "cpu"},
