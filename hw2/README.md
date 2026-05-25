@@ -37,8 +37,10 @@
 1. Get Track's Audio Features (ορισμοί των audio features) - Πηγή: https://developer.spotify.com/documentation/web-api/reference/get-audio-features . Επιλέχθηκε για να παρέχει στον πράκτορα αυστηρούς τεχνικούς ορισμούς και αριθμητικά όρια για μεταβλητές όπως το acousticness, το instrumentalness και το valence.
 2. Artificial Intelligence in Music: Analysis, Classification, and Recommendation  - Πηγή: https://en.wikipedia.org/wiki/Artificial_intelligence_in_music . Επιλέχθηκε για να προσφέρει το ιστορικό και θεωρητικό πλαίσιο της τομής της μηχανικής μάθησης με την ψηφιακή επεξεργασία ήχου.
 3. Music information retrieval - Πηγή: https://en.wikipedia.org/wiki/Music_information_retrieval .Ενσωματώθηκε για να θεμελιώσει τον πράκτορα στις επιστημονικές μεθόδους εξαγωγής νοήματος από ακουστικά σήματα.
-4. AI-Generated Music Detection and its Challenges - Πηγή: https://arxiv.org/abs/2501.10111 . Eπιλέχθηκε για να τροφοδοτήσει τον πράκτορα με σύγχρονες ερευνητικές έννοιες που εξηγούν τις δομικές διαφορές (όπως οι συνθετικές γραμμές βάσης) μεταξύ ανθρώπινων και AI συνθέσεων.
+4. AI-Generated Music Detection and its Challenges - Πηγή: https://arxiv.org/abs/2501.10111 . Eπιλέχθηκε για να τροφοδοτήσει τον πράκτορα με σύγχρονες ερευνητικές έννοιες που εξηγούν τις δομικές διαφορές μεταξύ ανθρώπινων και AI συνθέσεων.
 5. Music Genres Explained: A Sonic Guide - Πηγή: https://orphiq.com/resources/music-genres-explained . Περιλαμβάνεται για τη διαχείριση ερωτημάτων που αφορούν την κατηγοριοποίηση των μουσικών ειδών με περιγραφή ποιοτικών χαρακτηριστικών.
+
+Ο πράκτορας λοιπόν μπορεί να απαντάει σε ερωτήσεις που αφορούν τα χαρακτηριστικά το ήχου και των διαφορετικών ειδών και υποειδών μουσικής. Επίσης ερωτήσεις που αφορούν τις μεθόδους που διακρίνεται η μουσική που παράχθηκε με τεχνική νοημοσύνη και την λειτουργία των συστημάτων συστάσεων. Επιπλέον, μπορεί να απαντήσει ερωτήσεις σχετικά με αρχές του Music Information Retrieval (MIR) καθώς και advanced έννοιες μηχανικής μάθησης, όπως το bias-variance tradeoff και τα πλεονεκτήματα του domain-specific feature engineering έναντι των deep learning μοντέλων.
 
 * **Chunking & Retrieval:** Τα κείμενα αυτά καλύπτουν τόσο το τεχνικό λεξιλόγιο όσο και το επιστημονικό υπόβαθρο της ανίχνευσης AI. Το RAG εκτελεί chunking με μέγεθος **600 χαρακτήρων** και επιστρέφει τα κορυφαία 3 σχετικά αποσπάσματα (**Top-k=3**).
 
@@ -106,11 +108,14 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 **Βήμα 4: Ρύθμιση Μεταβλητών Περιβάλλοντος**
-Δημιουργήστε ένα αρχείο .env στον φάκελο hw2 και προσθέστε το API Key σας. Το σύστημα έχει ως προεπιλογή το Groq (Llama 3).
+Δημιουργήστε ένα αρχείο .env στον φάκελο hw2 και προσθέστε το API Key σας.
 ```bash
 LLM_PROVIDER=groq GROQ_API_KEY=ΤΟ_GROQ_API_KEY_ΣΑΣ python3 main.py
 ```
 (Ο server θα ξεκινήσει στο http://0.0.0.0:8000. Το vector store θα δημιουργηθεί αυτόματα την πρώτη φορά που θα τρέξετε τον κώδικα).
+
+**Βήμα 5: Περιβάλλον Swagger UI**
+Επισκεφθείτε το http://127.0.0.1:8000/docs .
 
 ## 7. Παράδειγμα κλήσης API
 ```bash
@@ -123,5 +128,10 @@ curl -X 'POST' \
   "session_id": "ntua_student_session"
 }'
 ```
-**Βήμα 5: ΠεριβάλλονSwagger UI**
-Επισκεφθείτε το http://127.0.0.1:8000/docs .
+
+
+
+
+
+
+
