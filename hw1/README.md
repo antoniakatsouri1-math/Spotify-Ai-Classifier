@@ -112,7 +112,6 @@ Scree Plot: Το διάγραμμα δείχνει ότι απαιτούνται
 5) energy
 
 ![rf_feature_importances.png](plots/rf_feature_importances.png)
-
 ### Neural Network
 Πραγματοποιήθηκε σύγκριση τεσσάρων διαφορετικών συναρτήσεων ενεργοποίησης στο Νευρωνικό Δίκτυο (MLP) για την αξιολόγηση της ταχύτητας σύγκλισης και της τελικής ακρίβειας (ROC-AUC):
 ![activation_comparison.png](plots/activation_comparison.png)
