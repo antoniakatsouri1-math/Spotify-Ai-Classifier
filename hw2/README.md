@@ -100,6 +100,7 @@ pip install -r requirements.txt
 ```
 **Βήμα 4: Ρύθμιση Μεταβλητών Περιβάλλοντος**
 Δημιουργήστε ένα αρχείο .env στον φάκελο hw2 και προσθέστε το API Key σας. Το σύστημα έχει ως προεπιλογή το Groq (Llama 3).
+```bash
 LLM_PROVIDER=groq GROQ_API_KEY=ΤΟ_GROQ_API_KEY_ΣΑΣ python3 main.py
 ```
 (Ο server θα ξεκινήσει στο http://0.0.0.0:8000. Το vector store θα δημιουργηθεί αυτόματα την πρώτη φορά που θα τρέξετε τον κώδικα).
