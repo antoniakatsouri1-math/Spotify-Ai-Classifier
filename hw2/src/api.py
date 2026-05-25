@@ -47,6 +47,7 @@ class SessionInfo(BaseModel):
     message_count: int
     message: str
 
+
 @app.get("/", tags=["Health"])
 def root():
     """Health check endpoint."""
@@ -68,7 +69,7 @@ def chat_endpoint(request: ChatRequest) -> ChatResponse:
 
 @app.post("/chat/stream", tags=["Chat (Streaming – Bonus Task 6)"])
 async def chat_stream_endpoint(request: ChatRequest) -> StreamingResponse:
-   async def token_generator() -> AsyncGenerator[str, None]:
+    async def token_generator() -> AsyncGenerator[str, None]:
         loop = asyncio.get_event_loop()
         full_response = await loop.run_in_executor(
             None, chat, request.message, request.session_id
@@ -102,6 +103,8 @@ def get_session(session_id: str) -> SessionInfo:
         message_count=len(history),
         message=f"Session '{session_id}' has {len(history)} message(s) in history.",
     )
+
+
 @app.delete("/session/{session_id}", tags=["Session Management"])
 def delete_session(session_id: str) -> dict:
     clear_session(session_id)
