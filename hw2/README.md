@@ -52,7 +52,7 @@
 
 **Βήμα 1: Κλωνοποίηση του αποθετηρίου**
 ```bash
-git clone [https://github.com/ΤΟ_USERNAME_ΣΟΥ/Spotify-Ai-Classifier.git](https://github.com/ΤΟ_USERNAME_ΣΟΥ/Spotify-Ai-Classifier.git)
+git clone [https://github.com/antoniakatsouri1-math/Spotify-Ai-Classifier.git]
 cd Spotify-Ai-Classifier/hw2
 ```
 **Βήμα 2: Δημιουργία Virtual Environment**
