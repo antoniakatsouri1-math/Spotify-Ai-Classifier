@@ -16,20 +16,29 @@
 2. Να κάνει προβλέψεις σε πραγματικό χρόνο για το αν ένα κομμάτι είναι δημιουργημένο από άνθρωπο (Human-made) ή από Τεχνητή Νοημοσύνη (AI-Generated), αξιοποιώντας το εκπαιδευμένο Νευρωνικό Δίκτυο.
 3. Να εξάγει στατιστικά στοιχεία απευθείας από το dataset.
 
-## 2. Αρχιτεκτονική Συστήματος (High-Level Architecture)
-Η αρχιτεκτονική του συστήματος βασίζεται σε σύγχρονα εργαλεία LLM orchestration και web development:
+## 2. Αρχιτεκτονική Συστήματος 
+Η αρχιτεκτονική του συστήματος συνδυάζει web υπηρεσίες, ορχήστρωση LLM βασισμένη σε γράφους και διανυσματικές δομές δεδομένων:
+
+```text
+[User Request] ──> [FastAPI (api.py)] ──> [LangGraph Engine (agent.py)]
+                                                    │
+                     ┌──────────────────────────────┼──────────────────────────────┐
+                     ▼                              ▼                              ▼
+           [rag_knowledge_tool]             [prediction_tool]            [dataset_stats_tool]
+             (ChromaDB Vector)              (PyTorch NN Model)               (Pandas Ingestion)
+
 * **Web Framework:** Το API είναι στημένο με **FastAPI** (`api.py`), προσφέροντας endpoints για chat, streaming απαντήσεων και διαχείριση συνεδριών (session memory).
 * **Agent Logic:** Η ροή του Agent έχει υλοποιηθεί με **LangGraph** (`agent.py`). Ο Agent δέχεται το μήνυμα του χρήστη, αξιολογεί αν χρειάζεται να χρησιμοποιήσει κάποιο εργαλείο (ToolNode) ή αν μπορεί να απαντήσει απευθείας, και τροφοδοτείται από cloud LLMs (υποστηρίζει Groq, OpenAI, Google, Anthropic).
 * **Vector Store / RAG:** Χρησιμοποιείται η **ChromaDB** (`rag.py`) για την αποθήκευση και τοπική ανάκτηση γνώσης, με embeddings από το HuggingFace (`all-MiniLM-L6-v2`).
 * **Machine Learning / Tools:** Το `tools.py` γεφυρώνει τον πράκτορα με το PyTorch μοντέλο του HW1.
 
-## 3. Σύστημα RAG (Retrieval-Augmented Generation)
-Για να αποκτήσει ο πράκτορας εξειδικευμένη γνώση (Domain Knowledge), συλλέχθηκαν 5 έγγραφα κειμένου που αποθηκεύτηκαν στον φάκελο `data/documents/`:
-1. Get Track's Audio Features (ορισμοί των audio features) - Πηγή: https://developer.spotify.com/documentation/web-api/reference/get-audio-features
-2. Artificial Intelligence in Music: Analysis, Classification, and Recommendation  - Πηγή: https://en.wikipedia.org/wiki/Artificial_intelligence_in_music
-3. Music information retrieval - Πηγή: https://en.wikipedia.org/wiki/Music_information_retrieval
-4. AI-Generated Music Detection and its Challenges - Πηγή: https://arxiv.org/abs/2501.10111
-5. Music Genres Explained: A Sonic Guide - Πηγή: https://orphiq.com/resources/music-genres-explained
+##3. Σύστημα RAG (Retrieval-Augmented Generation)
+Για να αποκτήσει ο πράκτορας εξειδικευμένη γνώση, συλλέχθηκαν 5 έγγραφα κειμένου που αποθηκεύτηκαν στον φάκελο `data/documents/`:
+1. Get Track's Audio Features (ορισμοί των audio features) - Πηγή: https://developer.spotify.com/documentation/web-api/reference/get-audio-features . Επιλέχθηκε για να παρέχει στον πράκτορα αυστηρούς τεχνικούς ορισμούς και αριθμητικά όρια για μεταβλητές όπως το acousticness, το instrumentalness και το valence.
+2. Artificial Intelligence in Music: Analysis, Classification, and Recommendation  - Πηγή: https://en.wikipedia.org/wiki/Artificial_intelligence_in_music . Επιλέχθηκε για να προσφέρει το ιστορικό και θεωρητικό πλαίσιο της τομής της μηχανικής μάθησης με την ψηφιακή επεξεργασία ήχου.
+3. Music information retrieval - Πηγή: https://en.wikipedia.org/wiki/Music_information_retrieval .Ενσωματώθηκε για να θεμελιώσει τον πράκτορα στις επιστημονικές μεθόδους εξαγωγής νοήματος από ακουστικά σήματα.
+4. AI-Generated Music Detection and its Challenges - Πηγή: https://arxiv.org/abs/2501.10111 . Eπιλέχθηκε για να τροφοδοτήσει τον πράκτορα με σύγχρονες ερευνητικές έννοιες που εξηγούν τις δομικές διαφορές (όπως οι συνθετικές γραμμές βάσης) μεταξύ ανθρώπινων και AI συνθέσεων.
+5. Music Genres Explained: A Sonic Guide - Πηγή: https://orphiq.com/resources/music-genres-explained . Περιλαμβάνεται για τη διαχείριση ερωτημάτων που αφορούν την κατηγοριοποίηση των μουσικών ειδών με περιγραφή ποιοτικών χαρακτηριστικών.
 
 * **Chunking & Retrieval:** Τα κείμενα αυτά καλύπτουν τόσο το τεχνικό λεξιλόγιο όσο και το επιστημονικό υπόβαθρο της ανίχνευσης AI. Το RAG εκτελεί chunking με μέγεθος **600 χαρακτήρων** και επιστρέφει τα κορυφαία 3 σχετικά αποσπάσματα (**Top-k=3**).
 
@@ -42,7 +51,7 @@
 3. Εκτελεί το Forward Pass στο Νευρωνικό Δίκτυο και επιστρέφει την πιθανότητα το τραγούδι να είναι Human-made ή AI-generated.
 
 ## 5. Επιπλέον Υλοποιήσεις
-* **Task 5 (Dataset Analytics Tool):** Δημιουργήθηκε το `dataset_stats_tool` που επιτρέπει στον Agent να διαβάζει το CSV αρχείο και να επιστρέφει στατιστικά (μέσο όρο, min, max, κατανομές) όταν ο χρήστης ρωτάει π.χ. *"Ποιος είναι ο μέσος όρος του tempo στο dataset;"*.
+* **Task 5 (Dataset Analytics Tool):** Δημιουργήθηκε το `dataset_stats_tool` που επιτρέπει στον Agent να διαβάζει το CSV αρχείο και να επιστρέφει στατιστικά (μέσο όρο, min, max, κατανομές).
 * **Task 6 (Streaming API):** Υλοποιήθηκε το endpoint `POST /chat/stream` το οποίο επιστρέφει την απάντηση σταδιακά (token-by-token) χρησιμοποιώντας το πρωτόκολλο Server-Sent Events (SSE).
 
 ## 6. Παραδείγματα Συζητήσεων
