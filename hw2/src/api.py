@@ -1,11 +1,3 @@
-"""
-src/api.py
-FastAPI application exposing:
-  POST /chat         – standard chat endpoint (mandatory)
-  POST /chat/stream  – streaming SSE endpoint (bonus Task 6)
-  DELETE /session/{session_id} – clear conversation history
-"""
-
 import asyncio
 import json
 from typing import AsyncGenerator
@@ -26,8 +18,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
-# ── Pydantic schemas ──────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
     message: str = Field(
         ...,
@@ -57,9 +47,6 @@ class SessionInfo(BaseModel):
     message_count: int
     message: str
 
-
-# ── Endpoints ─────────────────────────────────────────────────────────────────
-
 @app.get("/", tags=["Health"])
 def root():
     """Health check endpoint."""
@@ -72,16 +59,6 @@ def root():
 
 @app.post("/chat", response_model=ChatResponse, tags=["Chat"])
 def chat_endpoint(request: ChatRequest) -> ChatResponse:
-    """
-    Send a message to the agent and receive a complete response.
-
-    The agent can:
-    - Answer questions about Spotify audio features, music genres, and popularity
-    - Predict whether a track will be popular given its audio features
-    - Return dataset statistics on demand
-
-    Conversation history is maintained per session_id within the current server session.
-    """
     try:
         response_text = chat(request.message, request.session_id)
         return ChatResponse(response=response_text, session_id=request.session_id)
@@ -91,29 +68,18 @@ def chat_endpoint(request: ChatRequest) -> ChatResponse:
 
 @app.post("/chat/stream", tags=["Chat (Streaming – Bonus Task 6)"])
 async def chat_stream_endpoint(request: ChatRequest) -> StreamingResponse:
-    """
-    [BONUS] Send a message to the agent and receive a streaming SSE response.
-
-    Tokens are sent progressively as the LLM generates them, similar to ChatGPT's
-    streaming interface. The stream format follows the Server-Sent Events (SSE)
-    protocol: each event is prefixed with 'data: ' and terminated with a blank line.
-    A final event 'data: [DONE]' signals the end of the stream.
-    """
-
-    async def token_generator() -> AsyncGenerator[str, None]:
-        # Run the synchronous chat function in a thread pool to avoid blocking
+   async def token_generator() -> AsyncGenerator[str, None]:
         loop = asyncio.get_event_loop()
         full_response = await loop.run_in_executor(
             None, chat, request.message, request.session_id
         )
 
-        # Simulate word-by-word streaming of the complete response
         words = full_response.split(" ")
         for i, word in enumerate(words):
             chunk = word if i == 0 else " " + word
             payload = json.dumps({"token": chunk, "session_id": request.session_id})
             yield f"data: {payload}\n\n"
-            await asyncio.sleep(0.03)  # Small delay to simulate streaming
+            await asyncio.sleep(0.03)  
 
         yield "data: [DONE]\n\n"
 
@@ -136,10 +102,7 @@ def get_session(session_id: str) -> SessionInfo:
         message_count=len(history),
         message=f"Session '{session_id}' has {len(history)} message(s) in history.",
     )
-
-
 @app.delete("/session/{session_id}", tags=["Session Management"])
 def delete_session(session_id: str) -> dict:
-    """Clear the conversation history for a given session."""
     clear_session(session_id)
     return {"message": f"Session '{session_id}' cleared successfully."}
