@@ -55,20 +55,28 @@
 git clone [https://github.com/ΤΟ_USERNAME_ΣΟΥ/Spotify-Ai-Classifier.git](https://github.com/ΤΟ_USERNAME_ΣΟΥ/Spotify-Ai-Classifier.git)
 cd Spotify-Ai-Classifier/hw2
 ```
-**Βήμα 2: Δημιουργία Virtual Environment και Εγκατάσταση Εξαρτήσεων**
+**Βήμα 2: Δημιουργία Virtual Environment**
 ```bash
+cd Spotify-Ai-Classifier/hw2
 python -m venv venv
-source venv/bin/activate  # Για Mac/Linux
-# Ή για Windows: venv\Scripts\activate
+source venv/bin/bin/activate
+```
+
+**Βήμα 3: Εγκαθιστούμε τις βιβλιοθήκες**
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
-**Βήμα 3: Ρύθμιση Μεταβλητών Περιβάλλοντος**
+**Βήμα 4: Ρύθμιση Μεταβλητών Περιβάλλοντος**
 Δημιουργήστε ένα αρχείο .env στον φάκελο hw2 και προσθέστε το API Key σας. Το σύστημα έχει ως προεπιλογή το Groq (Llama 3), αλλά υποστηρίζει και OpenAI, Google ή Anthropic.
 ```bash
-LLM_PROVIDER=groq
-GROQ_API_KEY=το_κλειδι_σας_εδω
+env_content = """LLM_PROVIDER=groq
+GROQ_API_KEY=το_κλειδι_σας_εδω"""
+with open(".env", "w") as f:
+    f.write(env_content)
+print("Το αρχείο .env δημιουργήθηκε με επιτυχία!")
 ```
-**Βήμα 4: Εκκίνηση του FastAPI Server**
+**Βήμα 5: Εκκίνηση του FastAPI Server**
 ```bash
 python main.py
 ```
