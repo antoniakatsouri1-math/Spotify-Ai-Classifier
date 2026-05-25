@@ -26,13 +26,13 @@
                      ▼                              ▼                              ▼
            [rag_knowledge_tool]             [prediction_tool]            [dataset_stats_tool]
              (ChromaDB Vector)              (PyTorch NN Model)               (Pandas Ingestion)
-
+```
 * **Web Framework:** Το API είναι στημένο με **FastAPI** (`api.py`), προσφέροντας endpoints για chat, streaming απαντήσεων και διαχείριση συνεδριών (session memory).
 * **Agent Logic:** Η ροή του Agent έχει υλοποιηθεί με **LangGraph** (`agent.py`). Ο Agent δέχεται το μήνυμα του χρήστη, αξιολογεί αν χρειάζεται να χρησιμοποιήσει κάποιο εργαλείο (ToolNode) ή αν μπορεί να απαντήσει απευθείας, και τροφοδοτείται από cloud LLMs (υποστηρίζει Groq, OpenAI, Google, Anthropic).
 * **Vector Store / RAG:** Χρησιμοποιείται η **ChromaDB** (`rag.py`) για την αποθήκευση και τοπική ανάκτηση γνώσης, με embeddings από το HuggingFace (`all-MiniLM-L6-v2`).
 * **Machine Learning / Tools:** Το `tools.py` γεφυρώνει τον πράκτορα με το PyTorch μοντέλο του HW1.
 
-##3. Σύστημα RAG (Retrieval-Augmented Generation)
+## 3. Σύστημα RAG (Retrieval-Augmented Generation)
 Για να αποκτήσει ο πράκτορας εξειδικευμένη γνώση, συλλέχθηκαν 5 έγγραφα κειμένου που αποθηκεύτηκαν στον φάκελο `data/documents/`:
 1. Get Track's Audio Features (ορισμοί των audio features) - Πηγή: https://developer.spotify.com/documentation/web-api/reference/get-audio-features . Επιλέχθηκε για να παρέχει στον πράκτορα αυστηρούς τεχνικούς ορισμούς και αριθμητικά όρια για μεταβλητές όπως το acousticness, το instrumentalness και το valence.
 2. Artificial Intelligence in Music: Analysis, Classification, and Recommendation  - Πηγή: https://en.wikipedia.org/wiki/Artificial_intelligence_in_music . Επιλέχθηκε για να προσφέρει το ιστορικό και θεωρητικό πλαίσιο της τομής της μηχανικής μάθησης με την ψηφιακή επεξεργασία ήχου.
@@ -50,11 +50,11 @@
 2. Κανονικοποιεί τα 18 πλέον χαρακτηριστικά μέσω του Scikit-Learn Scaler.
 3. Εκτελεί το Forward Pass στο Νευρωνικό Δίκτυο και επιστρέφει την πιθανότητα το τραγούδι να είναι Human-made ή AI-generated.
 
-## 5. Επιπλέον Υλοποιήσεις
+## Επιπλέον Υλοποιήσεις
 * **Task 5 (Dataset Analytics Tool):** Δημιουργήθηκε το `dataset_stats_tool` που επιτρέπει στον Agent να διαβάζει το CSV αρχείο και να επιστρέφει στατιστικά (μέσο όρο, min, max, κατανομές).
 * **Task 6 (Streaming API):** Υλοποιήθηκε το endpoint `POST /chat/stream` το οποίο επιστρέφει την απάντηση σταδιακά (token-by-token) χρησιμοποιώντας το πρωτόκολλο Server-Sent Events (SSE).
 
-## 6. Παραδείγματα Συζητήσεων
+## 5. Παραδείγματα Συζητήσεων
 Ο πράκτορας(agent) εκπαιδεύτηκε και επομένως εξυπηρετεί στην αγγλική γλώσσα.
 ### Παράδειγμα 1: 
 
@@ -88,7 +88,7 @@
 > 
 > **Agent:** *(utilizes conversation history)* The track was classified as human-made based on its audio features, particularly the **low acousticness** and **high instrumentalness**. These features are consistent with human-made music, which tends to have more complex and nuanced soundscapes compared to the synthetic baselines often found in AI-generated tracks. The neural network used to classify the track was trained on a dataset of human-made and AI-generated music, and it learned to recognize patterns and weights that distinguish between the two. In this case, the model combined these values to determine that the track's features were more likely to be human-made with a probability of 73.5%.
 
-## 7. Εγκατάσταση και Εκτέλεση (Installation & Execution)
+## 6. Εγκατάσταση και Εκτέλεση (Installation & Execution)
 
 **Βήμα 1: Κλωνοποίηση του repository**
 ```bash
@@ -100,7 +100,6 @@ cd Spotify-Ai-Classifier/hw2
 python3 -m venv venv
 source venv/bin/activate
 ```
-
 **Βήμα 3: Εγκαθιστούμε τις βιβλιοθήκες**
 ```bash
 pip install --upgrade pip
@@ -113,5 +112,16 @@ LLM_PROVIDER=groq GROQ_API_KEY=ΤΟ_GROQ_API_KEY_ΣΑΣ python3 main.py
 ```
 (Ο server θα ξεκινήσει στο http://0.0.0.0:8000. Το vector store θα δημιουργηθεί αυτόματα την πρώτη φορά που θα τρέξετε τον κώδικα).
 
+## 7. Παράδειγμα κλήσης API
+```bash
+curl -X 'POST' \
+  '[http://127.0.0.1:8000/chat](http://127.0.0.1:8000/chat)' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "message": "What is the role of acousticness in music classification?",
+  "session_id": "ntua_student_session"
+}'
+```
 **Βήμα 5: ΠεριβάλλονSwagger UI**
 Επισκεφθείτε το http://127.0.0.1:8000/docs .
