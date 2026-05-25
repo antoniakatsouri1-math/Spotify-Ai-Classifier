@@ -38,7 +38,7 @@ INPUT_SIZE = len(ENGINEERED_FEATURES)  # 18
 class SpotifyClassifier(nn.Module):
     def __init__(self, input_size=INPUT_SIZE):
         super().__init__()
-        self.network = nn.Sequential(
+        self.net = nn.Sequential(
             nn.Linear(input_size, 128), nn.ReLU(), nn.Dropout(0.3),
             nn.Linear(128, 64), nn.ReLU(), nn.Dropout(0.2),
             nn.Linear(64, 32), nn.LeakyReLU(),
@@ -46,7 +46,7 @@ class SpotifyClassifier(nn.Module):
         )
 
     def forward(self, x):
-        return self.network(x)
+        return self.net(x)
 
 
 def _get_vectorstore():
@@ -92,12 +92,12 @@ def _preprocess_input(features):
     return torch.tensor(scaler.transform(X), dtype=torch.float32)
 
 
-
 def _retrieval_fn(query: str) -> str:
     return retrieve(query, _get_vectorstore())
 
 
 def _prediction_fn(input_json: str) -> str:
+    print(f"[DEBUG] prediction_fn called with: {input_json}")
     try:
         features = json.loads(input_json)
     except json.JSONDecodeError as e:
@@ -110,18 +110,20 @@ def _prediction_fn(input_json: str) -> str:
         prob_human = 1.0 - prob_ai
         if prob_ai >= 0.5:
             return (
-                f"Prediction: AI-GENERATED (probability: {prob_ai*100:.1f}%)\n"
-                f"energy={features.get('energy','N/A')}, "
-                f"acousticness={features.get('acousticness','N/A')}, "
-                f"instrumentalness={features.get('instrumentalness','N/A')}."
+                f"Prediction: AI-GENERATED (probability: {prob_ai * 100:.1f}%)\n"
+                f"energy={features.get('energy', 'N/A')}, "
+                f"acousticness={features.get('acousticness', 'N/A')}, "
+                f"instrumentalness={features.get('instrumentalness', 'N/A')}."
             )
         else:
             return (
-                f"Prediction: HUMAN-MADE (probability of being human: {prob_human*100:.1f}%)\n"
-                f"acousticness={features.get('acousticness','N/A')}, "
-                f"instrumentalness={features.get('instrumentalness','N/A')}."
+                f"Prediction: HUMAN-MADE (probability of being human: {prob_human * 100:.1f}%)\n"
+                f"acousticness={features.get('acousticness', 'N/A')}, "
+                f"instrumentalness={features.get('instrumentalness', 'N/A')}."
             )
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return f"Error running prediction: {e}"
 
 
@@ -136,9 +138,9 @@ def _stats_fn(column_name: str) -> str:
                 counts = col.value_counts().sort_index()
                 return (
                     f"ai_generated distribution:\n"
-                    f"  Human (0):        {counts.get(0,0):,}\n"
-                    f"  AI-Generated (1): {counts.get(1,0):,}\n"
-                    f"  AI ratio:         {col.mean()*100:.1f}%"
+                    f"  Human (0):        {counts.get(0, 0):,}\n"
+                    f"  AI-Generated (1): {counts.get(1, 0):,}\n"
+                    f"  AI ratio:         {col.mean() * 100:.1f}%"
                 )
             s = col.describe()
             return (
@@ -149,21 +151,23 @@ def _stats_fn(column_name: str) -> str:
         top5 = col.value_counts().head(5)
         return f"Top values for '{column_name}':\n" + "\n".join(f"  {v}: {c:,}" for v, c in top5.items())
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return f"Error: {e}"
-
 
 
 class RetrievalInput(BaseModel):
     query: str = Field(description="The user question to search the knowledge base for")
 
+
 class PredictionInput(BaseModel):
-    input_json: str = Field(description="JSON string with audio features: acousticness, danceability, duration_ms, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time_signature, valence, popularity, short_form")
+    input_json: str = Field(
+        description="JSON string with audio features: acousticness, danceability, duration_ms, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, time_signature, valence, popularity, short_form")
+
 
 class StatsInput(BaseModel):
     column_name: str = Field(description="Name of the dataset column to get statistics for")
 
-
-# ── Build tools ────────────────────────────────────────────────────────────────
 
 retrieval_tool = StructuredTool.from_function(
     func=_retrieval_fn,
