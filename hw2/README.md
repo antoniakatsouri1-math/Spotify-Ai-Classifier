@@ -50,16 +50,15 @@
 
 ## 6. Εγκατάσταση και Εκτέλεση (Installation & Execution)
 
-**Βήμα 1: Κλωνοποίηση του αποθετηρίου**
+**Βήμα 1: Κλωνοποίηση του repository**
 ```bash
 git clone https://github.com/antoniakatsouri1-math/Spotify-Ai-Classifier.git
 cd Spotify-Ai-Classifier/hw2
 ```
 **Βήμα 2: Δημιουργία Virtual Environment**
 ```bash
-cd Spotify-Ai-Classifier/hw2
 python -m venv venv
-source venv/bin/bin/activate
+source venv/bin/activate
 ```
 
 **Βήμα 3: Εγκαθιστούμε τις βιβλιοθήκες**
@@ -70,14 +69,15 @@ pip install -r requirements.txt
 **Βήμα 4: Ρύθμιση Μεταβλητών Περιβάλλοντος**
 Δημιουργήστε ένα αρχείο .env στον φάκελο hw2 και προσθέστε το API Key σας. Το σύστημα έχει ως προεπιλογή το Groq (Llama 3), αλλά υποστηρίζει και OpenAI, Google ή Anthropic.
 ```bash
-env_content = """LLM_PROVIDER=groq
-GROQ_API_KEY=το_κλειδι_σας_εδω"""
-with open(".env", "w") as f:
-    f.write(env_content)
-print("Το αρχείο .env δημιουργήθηκε με επιτυχία!")
+LLM_PROVIDER=groq GROQ_API_KEY=ΤΟ_GROQ_API_KEY_ΣΑΣ python3 main.py
 ```
 **Βήμα 5: Εκκίνηση του FastAPI Server**
 ```bash
 python main.py
 ```
 (Ο server θα ξεκινήσει στο http://0.0.0.0:8000. Το vector store θα δημιουργηθεί αυτόματα την πρώτη φορά που θα τρέξετε τον κώδικα).
+
+**Βήμα 6: ΠεριβάλλονSwagger UI**
+Επισκεφθείτε το http://127.0.0.1:8000/docs 
+
+
