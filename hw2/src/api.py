@@ -16,7 +16,6 @@ from pydantic import BaseModel, Field
 
 from src.agent import chat, clear_session, get_session_history
 
-# ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Spotify Music Intelligence Agent",
     description=(
