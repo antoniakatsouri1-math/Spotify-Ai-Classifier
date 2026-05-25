@@ -1,7 +1,3 @@
 .venv/
 hw1/.venv/
 .env
-# Optional: If your .pkl or .pt model files are larger than 100MB, GitHub will block them. 
-# Uncomment the next lines if you want to ignore them:
-# *.pkl
-# *.pt
