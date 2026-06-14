@@ -242,3 +242,5 @@ python main.py
 ```
 Εκκίνηση του REST API:
 ```
+python api.py
+```
