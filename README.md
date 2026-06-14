@@ -1,11 +1,5 @@
 # 🎵 Spotify AI Track Classifier
 
-**Μάθημα:** AI Hands-on, ΕΜΠ  
-**Φοιτήτρια:** Αντωνία Κατσούρη | ΑΜ: 09325010  
-**Repository:** [github.com/antoniakatsouri1-math/Spotify-Ai-Classifier](https://github.com/antoniakatsouri1-math/Spotify-Ai-Classifier)
-
----
-
 ## Περιγραφή Έργου
 
 Αυτό το project αναπτύχθηκε σε δύο φάσεις και στοχεύει στην **αυτόματη ανίχνευση προέλευσης μουσικών κομματιών** — διακρίνοντας αν ένα τραγούδι στο Spotify έχει δημιουργηθεί από άνθρωπο ή από Τεχνητή Νοημοσύνη, βάσει των ακουστικών χαρακτηριστικών του.
